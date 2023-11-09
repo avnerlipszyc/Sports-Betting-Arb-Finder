@@ -5,47 +5,55 @@ const app = express();
 
 app.use(cors());
 
-function findArbitrage(oddsData) {
-    const opportunities = []; // Array to store arbitrage opportunities
-    // Loop through each event in the odds data
-    oddsData.forEach(event => {
-      // Object to store the best odds for each outcome
-      const bestOdds = {};
-    
-      // Find the best odds for each outcome
-      event.bookmakers.forEach(bookmaker => {
-        bookmaker.markets.forEach(market => {
-          market.outcomes.forEach(outcome => {
-            if (!bestOdds[outcome.name] || outcome.price > bestOdds[outcome.name].price) {
-              bestOdds[outcome.name] = { price: outcome.price, bookmaker: bookmaker.title };
-            }
-          });
+function findArbitrage(oddsData, riskLevel) {
+  let riskMultiplier = 10;
+
+  if (riskLevel === 'Medium') {
+    riskMultiplier = 100; // Adjust as needed for medium risk
+  } else if (riskLevel === 'High') {
+    riskMultiplier = 1000; // Adjust as needed for high risk
+  }
+  const opportunities = []; // Array to store arbitrage opportunities
+
+  oddsData.forEach(event => {
+    const { home_team, away_team, bookmakers } = event; // Destructure the properties
+
+    const bestOdds = {};
+
+    // Find the best odds for each outcome
+    bookmakers.forEach(bookmaker => {
+      bookmaker.markets.forEach(market => {
+        market.outcomes.forEach(outcome => {
+          if (!bestOdds[outcome.name] || outcome.price > bestOdds[outcome.name].price) {
+            bestOdds[outcome.name] = { price: outcome.price, bookmaker: bookmaker.title };
+          }
         });
       });
-    
-      // Calculate the inverse of the sum of the best odds
-      const invSum = Object.values(bestOdds).reduce((acc, data) => acc + (1 / data.price), 0);
-    
-      // If the inverse sum is less than 1, an arbitrage opportunity exists
-      if (invSum < 1) {
-        const opportunity = {
-          event: `${event.homeTeam} vs ${event.awayTeam}`,
-          bets: Object.entries(bestOdds).map(([outcome, data]) => {
-            const betAmount = (1 / data.price) / invSum;
-            return {
-              outcome,
-              betAmount: betAmount.toFixed(2),
-              bookmaker: data.bookmaker
-            };
-          })
-        };
-        opportunities.push(opportunity);
-      }
     });
-    return opportunities; // Return the array of opportunities
-  }
 
-const api_key = ""; // replace with your api key
+    const invSum = Object.values(bestOdds).reduce((acc, data) => acc + (1 / data.price), 0);
+
+    if (invSum < 1) {
+      const opportunity = {
+        event: `${home_team} vs ${away_team}`, // Construct the event name
+        bets: Object.entries(bestOdds).map(([outcome, data]) => {
+          const betAmount = riskMultiplier * (1 / data.price) / invSum;
+          return {
+            outcome,
+            betAmount: betAmount.toFixed(2),
+            bookmaker: data.bookmaker
+          };
+        })
+      };
+      opportunities.push(opportunity);
+    }
+  });
+
+  return opportunities; // Return the array of opportunities
+}
+
+const api_key = ""; // Use environment variable in production
+
 
 // A mapping from common user input to your sports API keys
 const sportKeyMap = {
