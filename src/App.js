@@ -111,7 +111,7 @@ const App = () => {
               <Grid item xs={12}>
                 <Stack direction="row" justifyContent="center">
                   <Button type="submit" variant="contained" color="primary" disabled={loading}>
-                    {loading ? 'Loading...' : 'Find Arbitrage'}
+                    {loading ? 'Loading...' : 'Find Bet'}
                   </Button>
                 </Stack>
               </Grid>
@@ -129,9 +129,9 @@ const App = () => {
                   label="Risk Level"
                   style={{ marginLeft: '8px' }}
                 >
-                  <MenuItem value="low">Low</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="high">High</MenuItem>
+                  <MenuItem value="low" >Low</MenuItem>
+                  <MenuItem value="medium" >Medium</MenuItem>
+                  <MenuItem value="high" >High</MenuItem>
                 </Select>
               </Typography>
             </Box>
