@@ -8,11 +8,6 @@ app.use(cors());
 function findArbitrage(oddsData, riskLevel) {
   let riskMultiplier = 10;
 
-  if (riskLevel === 'Medium') {
-    riskMultiplier = 100; // Adjust as needed for medium risk
-  } else if (riskLevel === 'High') {
-    riskMultiplier = 1000; // Adjust as needed for high risk
-  }
   const opportunities = []; // Array to store arbitrage opportunities
 
   oddsData.forEach(event => {
@@ -57,9 +52,8 @@ const api_key = ""; // Use environment variable in production
 
 // A mapping from common user input to your sports API keys
 const sportKeyMap = {
-    "american_football": [
+    "football": [
       "americanfootball_cfl",
-      "americanfootball_ncaaf",
       "americanfootball_nfl",
     ],
     "basketball": [
@@ -78,7 +72,7 @@ const sportKeyMap = {
       "golf_the_open_championship_winner",
       "golf_us_open_winner",
     ],
-    "ice_hockey": [
+    "ice hockey": [
       "icehockey_nhl",
       "icehockey_nhl_championship_winner",
       "icehockey_sweden_allsvenskan",

@@ -55,10 +55,13 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
+
+    const isoDate = new Date(date).toISOString();
+
     axios.get('http://localhost:3001/getOdds', {
       params: {
         sport: sport,
-        date: date,
+        date: isoDate,
         // riskLevel: riskLevel,
       }
     })
@@ -79,7 +82,7 @@ const App = () => {
 
   return (
     <RootStyle>
-      <Container maxWidth="lg" sx={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Container maxWidth="lg" sx={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
         <Box sx={{ width: '100%', marginTop: '2rem' }}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
@@ -88,10 +91,10 @@ const App = () => {
                   Never Lose When You Bet.
                 </Typography>
                 <Typography variant="body2" align="center" color="textSecondary" sx={{ marginTop: '1rem', marginBottom: '1rem' }}>
-                We calculate the arbitrage opportunities between different sportsbooks so you never lose.
-              </Typography>
-              </Grid >
-              <Grid item xs={12} sm={6} >
+                  We calculate the best odds between different sportsbooks so you never lose.
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   label="Choose a sport"
                   value={sport}
@@ -120,48 +123,30 @@ const App = () => {
               </Grid>
             </Grid>
           </form>
-
-          {/* Conditionally render the Risk Level dropdown */}
-          {/* {!arbitragePopulated && (
-            <Box sx={{ marginTop: 2, textAlign: 'center' }}>
-              <Typography variant="h6">
-                Risk Level:
-                <Select
-                  value={riskLevel}
-                  onChange={(e) => setRiskLevel(e.target.value)}
-                  label="Risk Level"
-                  style={{ marginLeft: '8px' }}
-                >
-                  <MenuItem value="low" >Low</MenuItem>
-                  <MenuItem value="medium" >Medium</MenuItem>
-                  <MenuItem value="high" >High</MenuItem>
-                </Select>
-              </Typography>
-            </Box>
-          )} */}
-
+  
           {error && (
             <Typography variant="body1" align="center" color="error">
               {error}
             </Typography>
           )}
+  
           {oddsData && oddsData.length > 0 && (
             <Box sx={{ marginTop: 4 }}>
-             <Typography variant="h4" align="center" sx={{ marginBottom: '1rem' }}>
+              <Typography variant="h4" align="center" sx={{ marginBottom: '1rem' }}>
                 Our Recommendations:
               </Typography>
               <Grid container spacing={2} justifyContent="center" sx={{ marginTop: '1rem' }}>
                 {oddsData.map((opportunity, index) => (
                   <Grid item key={index} xs={12} md={6} lg={4}>
                     <Card sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-                       <CardContent style={{ flex: 1, minHeight: '200px' }}>
+                      <CardContent style={{ flex: 1, minHeight: '200px' }}>
                         <Table>
                           <TableBody>
                             <TableRow>
                               <TableCell colSpan={3}>
-                              <Typography variant="h6" align="center" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {opportunity.event || 'Unknown Event'}
-                              </Typography>
+                                <Typography variant="h6" align="center" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {opportunity.event || 'Unknown Event'}
+                                </Typography>
                               </TableCell>
                             </TableRow>
                             {opportunity.bets.map((bet, betIndex) => (
@@ -184,9 +169,10 @@ const App = () => {
               </Grid>
             </Box>
           )}
-        <Typography variant="body2" align="center" color="textSecondary" sx={{ marginTop: '6rem', marginBottom: '2rem' }}>
-          Disclaimer: This application provides betting odds for informational purposes only. We do not guarantee the accuracy or reliability of the information provided.
-        </Typography>
+  
+          <Typography variant="body2" align="center" color="textSecondary" sx={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
+            Disclaimer: This application provides betting odds for informational purposes only. We do not guarantee the accuracy or reliability of the information provided.
+          </Typography>
         </Box>
       </Container>
     </RootStyle>
