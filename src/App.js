@@ -14,6 +14,7 @@ const RootStyle = styled('div')(({ theme }) => ({
   overflow: 'auto', // Allow scrolling when content exceeds the height
 }));
 
+
 const bookmakerUrls = {
   'BetMGM': 'https://www.betmgm.com/',
   'SuperBook': 'https://www.superbook.com/',
@@ -56,7 +57,7 @@ const App = () => {
     event.preventDefault();
     setLoading(true);
 
-    const isoDate = new Date(date).toISOString();
+    const isoDate = new Date(date + 'T00:00:00Z').toISOString();
 
     axios.get('http://localhost:3001/getOdds', {
       params: {
@@ -82,8 +83,8 @@ const App = () => {
 
   return (
     <RootStyle>
-      <Container maxWidth="lg" sx={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-        <Box sx={{ width: '100%', marginTop: '2rem' }}>
+      <Container maxWidth="lg" sx={{ minHeight: '250vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', paddingBottom: '3rem' }}>
+        <Box sx={{ width: '100%', marginTop: '2rem', flex: 1 }}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
@@ -106,7 +107,7 @@ const App = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   type="date"
-                  label="Select a date"
+                  label="Select a cutoff date"
                   value={date}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   margin="normal"
@@ -129,15 +130,15 @@ const App = () => {
               {error}
             </Typography>
           )}
-  
-          {oddsData && oddsData.length > 0 && (
-            <Box sx={{ marginTop: 4 }}>
-              <Typography variant="h4" align="center" sx={{ marginBottom: '1rem' }}>
+
+{oddsData && oddsData.length > 0 && (
+            <>
+              <Typography variant="h4" align="center" sx={{ marginBottom: '1rem', marginTop: '2rem' }}>
                 Our Recommendations:
               </Typography>
-              <Grid container spacing={2} justifyContent="center" sx={{ marginTop: '1rem' }}>
-                {oddsData.map((opportunity, index) => (
-                  <Grid item key={index} xs={12} md={6} lg={4}>
+              <Grid container spacing={2} justifyContent="center" sx={{ marginTop: '1rem', gap: '1rem' }}>
+                {oddsData.slice(0, 6).map((opportunity, index) => (
+                  <Grid item key={index} xs={12} md={6} lg={4} sx={{ marginBottom: '1rem' }}>
                     <Card sx={{ padding: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <CardContent style={{ flex: 1, minHeight: '200px' }}>
                         <Table>
@@ -167,11 +168,20 @@ const App = () => {
                   </Grid>
                 ))}
               </Grid>
-            </Box>
+            </>
           )}
-  
-          <Typography variant="body2" align="center" color="textSecondary" sx={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
-            Disclaimer: This application provides betting odds for informational purposes only. We do not guarantee the accuracy or reliability of the information provided.
+
+          {error && (
+            <Typography variant="body1" align="center" color="error">
+              {error}
+            </Typography>
+          )}
+        </Box>
+
+        <Box sx={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
+          <Typography variant="body2" align="center" color="textSecondary">
+            Disclaimer: This application provides betting odds for informational purposes only. 
+            We do not guarantee the accuracy or reliability of the information provided.
           </Typography>
         </Box>
       </Container>
