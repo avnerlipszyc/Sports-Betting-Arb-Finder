@@ -59,7 +59,7 @@ const App = () => {
 
     const isoDate = new Date(date + 'T00:00:00Z').toISOString();
 
-    axios.get('http://localhost:3001/getOdds', {
+    axios.get('https://betting-app-hello-a690221805e5.herokuapp.com/getOdds', {
       params: {
         sport: sport,
         date: isoDate,
